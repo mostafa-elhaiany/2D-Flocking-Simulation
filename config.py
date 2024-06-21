@@ -1,0 +1,7 @@
+############## CONSTANTS ######################
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 400
+SCREEN_DIMS = (SCREEN_WIDTH, SCREEN_HEIGHT)
+
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
