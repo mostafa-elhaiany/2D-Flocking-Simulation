@@ -4,18 +4,23 @@ import random
 
 
 class Boid:
-    def __init__(self, x, y, radius = 3, perception_distance=30):
+    """
+    Boid class, simulates the behaviour of a single boid in the flock
+    """
+    def __init__(self, x, y, radius = 3, 
+                 perception_distance=30, cohesion_weight = .6, align_weight = .8, separation_weight = .8, random_weight = 0,
+                 max_speed = 4, max_force = 2):
         self.position = math.Vector2(x, y)
         self.velocity = math.Vector2(random.random(),random.random())
         self.acceleration = math.Vector2()
         self.perception_distance = perception_distance
         self.radius = radius
-        self.cohesion_weight = .6
-        self.align_weight = .8
-        self.separation_weight = .8
-        self.random_weight = 0.05
-        self.max_speed = 4
-        self.max_force = 2
+        self.cohesion_weight = cohesion_weight
+        self.align_weight = align_weight
+        self.separation_weight = separation_weight
+        self.random_weight = random_weight
+        self.max_speed = max_speed
+        self.max_force = max_force
 
         self.prev_position = self.position
         self.prev_velocity = self.velocity
@@ -24,7 +29,7 @@ class Boid:
         self.color = math.Vector3(random.randint(0,255), random.randint(0,255), random.randint(0,255))
 
     def draw(self, screen):
-        for b in self.locals:
+        for b in self.locals: # boids in the same local flock share the same color
             b.color = self.color
         pygame.draw.circle(screen, self.color, self.position, self.radius)
 
@@ -81,6 +86,9 @@ class Boid:
 
 
     def optimized_update(self, boid_idx, boids):
+        """
+        Calculates all forces in the same loop instead of using a loop per force
+        """
         self.locals = []
 
         average_velocity = math.Vector2()
@@ -128,6 +136,9 @@ class Boid:
         
 
     def update(self, local_flock):
+        """
+        Calculates each force individually 
+        """
 
         align_velocity = self.align(local_flock)
         cohesion_velocity = self.cohesion(local_flock) 

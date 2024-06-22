@@ -9,21 +9,23 @@ pygame.init()
 screen = pygame.display.set_mode(config.SCREEN_DIMS)
 pygame.display.set_caption("Boid Flocking")
 
-flock = Flock(200)
+flocks = [
+    Flock(100),
+    Flock(100),
+    Flock(100),
+]
 
 
 def draw():
      # Fill screen with black
     screen.fill(config.BLACK)
-
-    flock.draw(screen)
+    
+    for flock in flocks:
+        flock.draw(screen)
 
     # Update display
     pygame.display.flip()
 
-
-def handle_event(event):
-    pass
 
 running = True
 clock = pygame.time.Clock()
@@ -31,11 +33,11 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        else:
-            handle_event(event)
     draw()
 
-    flock.optimzied_update()
+    for flock in flocks:
+        flock.optimzied_update()
+
 
     clock.tick(60)
 pygame.quit()
