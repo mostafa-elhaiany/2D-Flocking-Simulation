@@ -10,10 +10,15 @@ class Boid:
         self.acceleration = math.Vector2()
         self.perception_distance = perception_distance
         self.radius = radius
-        self.cohesion_weight = .25
-        self.align_weight = .3
-        self.separation_weight = .7
-        self.max_speed = 5
+        self.cohesion_weight = .8
+        self.align_weight = 1
+        self.separation_weight = 1
+        self.random_weight = 0.1
+        self.max_speed = 6
+        self.max_force = 1.2
+
+        self.prev_position = self.position
+        self.prev_velocity = self.velocity
 
     def draw(self, screen):
         pygame.draw.circle(screen, (255,255,255), self.position, self.radius)
@@ -69,6 +74,50 @@ class Boid:
         else:
             return avg
 
+
+    def optimized_update(self, boid_idx, boids):
+        average_velocity = math.Vector2()
+        avg_flock_position = math.Vector2()
+        avg_repulsion_positon =  math.Vector2()
+
+        num_local = 0
+        for b_idx, boid in enumerate(boids):
+            if(b_idx==boid_idx):
+                continue
+            distance = self.distance_to(boid)
+            if(distance < self.perception_distance):
+                avg_repulsion_positon += self.position - boid.prev_position
+                avg_flock_position += boid.prev_position
+                average_velocity += boid.prev_velocity
+                num_local +=1
+        if(num_local!=0):
+            avg_repulsion_positon /= num_local
+            avg_flock_position /= num_local
+            average_velocity /= num_local
+
+            align_velocity = (average_velocity.normalize() * self.max_speed - self.velocity).clamp_magnitude(self.max_force)
+            separation_velocity = (avg_repulsion_positon.normalize() * self.max_speed - self.velocity).clamp_magnitude(self.max_force)
+            cohesion_velocity = (((avg_flock_position - self.position).normalize() * self.max_speed) - self.velocity).clamp_magnitude(self.max_force)
+
+            rx = random.random()*2 - 1
+            ry = random.random()*2 - 1
+            random_heading = math.Vector2(rx, ry)
+
+            self.acceleration = align_velocity * self.align_weight + separation_velocity * self.separation_weight + cohesion_velocity * self.cohesion_weight + random_heading * self.random_weight
+
+            self.velocity += self.acceleration 
+            self.velocity = self.velocity.normalize() * self.max_speed
+            self.position += self.velocity
+        else:
+            rx = random.random()*2 - 1
+            ry = random.random()*2 - 1
+            random_heading = math.Vector2(rx, ry)
+            self.acceleration = random_heading * self.random_weight
+
+            self.velocity += self.acceleration 
+            self.velocity = self.velocity.normalize() * self.max_speed
+            self.position += self.velocity
+        
 
     def update(self, local_flock):
 

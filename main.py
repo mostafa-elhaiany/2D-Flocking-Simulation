@@ -35,7 +35,7 @@ while running:
             handle_event(event)
     draw()
 
-    flock.update()
+    flock.optimzied_update()
 
     clock.tick(60)
 pygame.quit()

@@ -27,7 +27,15 @@ class Flock:
                 local_flock.append(other)
         return local_flock
 
-            
+    def optimzied_update(self):
+        for b_idx, boid in enumerate(self.boids):
+            boid.optimized_update(b_idx, self.boids)
+
+        for boid in self.boids:
+            boid.position.x %= config.SCREEN_WIDTH
+            boid.position.y %= config.SCREEN_HEIGHT
+            boid.prev_pos = boid.position
+            boid.prev_velocity = boid.velocity
 
     def update(self):
         for b_idx, boid in enumerate(self.boids):
