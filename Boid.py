@@ -4,24 +4,29 @@ import random
 
 
 class Boid:
-    def __init__(self, x, y, radius = 3, perception_distance=25):
+    def __init__(self, x, y, radius = 3, perception_distance=30):
         self.position = math.Vector2(x, y)
         self.velocity = math.Vector2(random.random(),random.random())
         self.acceleration = math.Vector2()
         self.perception_distance = perception_distance
         self.radius = radius
-        self.cohesion_weight = .8
-        self.align_weight = 1
-        self.separation_weight = 1
-        self.random_weight = 0.1
-        self.max_speed = 6
-        self.max_force = 1.2
+        self.cohesion_weight = .6
+        self.align_weight = .8
+        self.separation_weight = .8
+        self.random_weight = 0.05
+        self.max_speed = 4
+        self.max_force = 2
 
         self.prev_position = self.position
         self.prev_velocity = self.velocity
 
+        self.locals = []
+        self.color = math.Vector3(random.randint(0,255), random.randint(0,255), random.randint(0,255))
+
     def draw(self, screen):
-        pygame.draw.circle(screen, (255,255,255), self.position, self.radius)
+        for b in self.locals:
+            b.color = self.color
+        pygame.draw.circle(screen, self.color, self.position, self.radius)
 
     def distance_to(self, other):
         return self.position.distance_to(other.position)
@@ -76,6 +81,8 @@ class Boid:
 
 
     def optimized_update(self, boid_idx, boids):
+        self.locals = []
+
         average_velocity = math.Vector2()
         avg_flock_position = math.Vector2()
         avg_repulsion_positon =  math.Vector2()
@@ -86,6 +93,7 @@ class Boid:
                 continue
             distance = self.distance_to(boid)
             if(distance < self.perception_distance):
+                self.locals.append(boid)
                 avg_repulsion_positon += self.position - boid.prev_position
                 avg_flock_position += boid.prev_position
                 average_velocity += boid.prev_velocity
