@@ -1,7 +1,7 @@
 import sys
 import pygame
 import config
-
+from Flock import Flock
 # Initialize Pygame
 pygame.init()
 
@@ -9,11 +9,14 @@ pygame.init()
 screen = pygame.display.set_mode(config.SCREEN_DIMS)
 pygame.display.set_caption("Boid Flocking")
 
+flock = Flock(300)
 
 
 def draw():
      # Fill screen with black
     screen.fill(config.BLACK)
+
+    flock.draw(screen)
 
     # Update display
     pygame.display.flip()
@@ -31,6 +34,8 @@ while running:
         else:
             handle_event(event)
     draw()
+
+    flock.update()
 
     clock.tick(60)
 pygame.quit()
