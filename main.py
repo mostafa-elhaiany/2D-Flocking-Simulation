@@ -9,7 +9,7 @@ pygame.init()
 screen = pygame.display.set_mode(config.SCREEN_DIMS)
 pygame.display.set_caption("Boid Flocking")
 
-flock = Flock(300)
+flock = Flock(100)
 
 
 def draw():
